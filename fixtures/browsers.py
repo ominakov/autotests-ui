@@ -28,11 +28,12 @@ def initialize_browser_state(playwright: Playwright):
     registration_button = page.get_by_test_id("registration-page-registration-button")
     registration_button.click()
 
-    page.wait_for_url("**/#/dashboard**")
     context.storage_state(path="browser-state.json")
+    browser.close()
 
 @pytest.fixture(scope="function")
 def chromium_page_with_state(initialize_browser_state, playwright: Playwright) -> Page:
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context(storage_state="browser-state.json")
     yield context.new_page()
+    browser.close()
